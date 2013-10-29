@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<geonet>
+	<services package="org.fao.geonet">
+
+		<!-- User interface: AURIN admin gateway to metadatatool system-->
+		<service name="home" prefixURLNotallowed="yes" >
+			<output sheet="aurin/home.xsl" contentType="text/html; charset=UTF-8"/>
+		</service>
+		
+		<!-- User interface: used by AURIN data providers -->
+		<service name="aurin.dataprovider" >
+			<class name=".services.metadata.aurin.DataProvider" />
+			<output sheet="aurin/dataprovider.xsl" contentType="text/html; charset=UTF-8"/>
+		</service>
+		
+		<!-- User interface: shows metadata record editor  -->
+		<service name="aurin.metadata.edit.ui"  >
+			
+			<class name=".services.common.RestWrapper" />
+			<output sheet="aurin/metadata_edit.xsl" contentType="text/html; charset=UTF-8"/>
+			
+		</service>
+
+		<!-- Service: returns AURIN schema (ISO19139 schema overrided) combo box element's code list  -->
+		<service name="aurin.schema.codelist.get.json">			
+			<output sheet="codelist_json.xsl" contentType="application/json; charset=UTF-8" />
+ 			
+		</service>
+		<!-- Service: (return type JSON)returns metadata record in JSON format  -->	
+		<service name="aurin.metadata.harvested.get.json">
+			<class name=".services.metadata.aurin.AURINHarvestedMetadata">
+				<param name="maxSummaryKeys" value="10" />
+				<param name="maxHitsInSummary" value="1000" />
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="get" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		
+		<!-- Service: (return type XML) returns metadata record in XML format  -->	
+		<service name="aurin.metadata.harvested.get">
+			<class name=".services.metadata.aurin.AURINHarvestedMetadata">
+				<param name="maxSummaryKeys" value="10" />
+				<param name="maxHitsInSummary" value="1000" />
+				<param name="cmd" value="get" />
+			</class>
+			<!-- <output sheet="conversion/19139toAURIN/ISO-AURIN-v1-amir.xsl" contentType="text/xml; charset=UTF-8"/>
+				 -->
+		</service>
+		<!-- Service: (return type JSON) returns harvested metadata record in JSON format (key as xpath) -->
+		<service name="aurin.metadata.harvested.getXPathMap">
+			<class name=".services.metadata.aurin.AURINHarvestedMetadata">
+				<param name="maxSummaryKeys" value="10" />
+				<param name="maxHitsInSummary" value="1000" />
+				<param name="xpathMap" value="true" />
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="get" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: update harvested metadata record according to JSON formated input parameter (key as xpath) -->
+		<service name="aurin.metadata.harvested.updateRecordviaXPathMap">
+			<class name=".services.metadata.aurin.AURINHarvestedMetadata">
+				<param name="maxSummaryKeys" value="10" />
+				<param name="maxHitsInSummary" value="1000" />
+				<param name="cmd" value="update" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: insert or update manually added metadata record according to JSON formated input parameter (key as xpath) -->
+		<service name="aurin.metadata.manuallyadded.insertORUpdateRecordviaXPathMap">
+			<class name=".services.metadata.aurin.ManuallyAddedAURINMetadata">
+				<param name="maxSummaryKeys" value="10" />
+				<param name="maxHitsInSummary" value="1000" />
+				<param name="cmd" value="insertOrUpdate" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: (return type JSON) returns manually metadata record in JSON format (key as xpath) -->
+		<service name="aurin.metadata.manuallyadded.getXPathMap">
+			<class name=".services.metadata.aurin.ManuallyAddedAURINMetadata">
+				<param name="maxSummaryKeys" value="10" />
+				<param name="maxHitsInSummary" value="1000" />
+				<param name="xpathMap" value="true" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: (return type XML) returns AURIN schema xml content which is generated using schema_editor table contents-->
+		<service name="aurin.schema.xsd" prefixURLNotallowed="yes">
+			<class name=".services.schema.aurin.GetSchema">
+				<param name="cmd" value="getAdditionalElement" />
+			</class>
+			<output sheet="aurin_schema_generator.xsl" contentType="text/xml; charset=UTF-8"/>
+		</service>
+		<!-- Service: (return type JSON) returns all elements schema_editor table which include both those defined in Schema Editor tab 
+			and those imported as ANZLIC element-->
+		<service name="aurin.schema.element.types.get.json">
+			<class name=".services.schema.aurin.GetSchema">
+				<param name="cmd" value="getElementTypeList" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: (return type XML) returns all elements in schema_editor table which have visible_schema_editor column's value set to true including those defind in Schema Editor tab 
+			 -->
+		<service name="aurin.schema.additional.elements.get">
+			<class name=".services.schema.aurin.AdditionalElement">
+				<param name="cmd" value="getOnlyAdditionalVisibleSchemaEditor" />
+			</class>
+		</service>		
+		<!-- Service: (return type JSON) returns all elements in schema_editor table which have visible_schema_editor column's value set to true including those defind in Schema Editor tab 
+			 -->
+		<service name="aurin.schema.additional.elements.get.json">
+			<class name=".services.schema.aurin.AdditionalElement">
+				<param name="cmd" value="getOnlyAdditionalVisibleSchemaEditor" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: (return type XML) returns all elements in schema_editor table which have visible_schema_editor column's value set to true including those defind in Schema Editor tab 
+			and those imported as ANZLIC element with visibility equal to true-->
+		<service name="aurin.schema.all.elements.get.json">
+			<class name=".services.schema.aurin.AdditionalElement">
+				<param name="cmd" value="getAll" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: (return type JSON) returns all elements in schema_editor table which have visible_schema_editor column's value set to true including those defind in Schema Editor tab 
+			and those imported as ANZLIC element with visibility equal to true-->
+		<service name="aurin.schema.visible.elements.get.json">
+			<class name=".services.schema.aurin.AdditionalElement">
+				<param name="cmd" value="getAllVisibleUILogicDesigner" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: insert new element into schema_editor table -->
+		<service name="aurin.schema.additional.elements.insert" prefixURLNotallowed="yes">
+			<class name=".services.schema.aurin.AdditionalElement">
+				<param name="cmd" value="insert" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: update element in schema_editor table -->
+		<service name="aurin.schema.additional.elements.update" prefixURLNotallowed="yes">
+			<class name=".services.schema.aurin.AdditionalElement">
+				<param name="cmd" value="update" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: delete element from schema_editor table -->
+		<service name="aurin.schema.additional.elements.delete" prefixURLNotallowed="yes">
+			<class name=".services.schema.aurin.AdditionalElement">
+				<param name="cmd" value="delete" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- User interface: import candidate ANZLIC elements into schema_editor table 
+		It first removes all records in "schema_element" table with reference column's value equal to "ANZLIC"
+		 and then inserts all elements with visibility equal true or store equal true as described in the user manual document.
+		 -->
+		<service name="aurin.schema.import.anzlic.ui" prefixURLNotallowed="yes">
+			<output sheet="aurin/import_anzlic.xsl" contentType="text/html; charset=UTF-8"/>
+		</service>
+		<!-- Service:  import candidate ANZLIC elements into schema_editor table -->
+		<service name="aurin.schema.import.anzlic.elements" prefixURLNotallowed="yes">
+			<class name=".services.schema.aurin.AURINImportANZLICElement"/>
+			<output sheet="aurin/import_anzlic_success.xsl" contentType="text/html; charset=UTF-8"/>
+		</service>
+		
+		<!-- - - - - - - - - - Start of Data Source Configuration Services- - - - - - - - - - - - -->
+		
+		<!-- Service:  get all data sources from data_source table -->
+		<service name="aurin.datasource.mgmt.get.json" prefixURLNotallowed="yes">
+			<class name=".services.harvesting.aurin.DataSourceMgmt">
+				<param name="cmd" value="getAll" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  get all RDBMS type data source records from data_source table -->
+		<service name="aurin.datasource.mgmt.getAllRDBMS.json" >
+			<class name=".services.harvesting.aurin.DataSourceMgmt">
+				<param name="cmd" value="getAllRDBMS" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  insert new record into data_source table -->
+		<service name="aurin.datasource.mgmt.insert" prefixURLNotallowed="yes">
+			<class name=".services.harvesting.aurin.DataSourceMgmt">
+				<param name="cmd" value="insert" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  update record existed in data_source table -->
+		<service name="aurin.datasource.mgmt.update" prefixURLNotallowed="yes">
+			<class name=".services.harvesting.aurin.DataSourceMgmt">
+				<param name="cmd" value="update" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  delete record by id from data_source table -->
+		<service name="aurin.datasource.mgmt.delete" prefixURLNotallowed="yes">
+			<class name=".services.harvesting.aurin.DataSourceMgmt">
+				<param name="cmd" value="delete" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  delete record by id from data_source table -->
+	 
+		<service name="aurin.datasource.mgmt.force_delete" prefixURLNotallowed="yes">
+			<class name=".services.harvesting.aurin.DataSourceMgmt">
+				<param name="cmd" value="force_delete" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+	 
+		<!-- - - - - - - - - - End of Data Source Configuration Services- - - - - - - - - - - - -->
+		<!-- - - - - - - - - - Start of Harvesting Node Configuration Services- - - - - - - - - - - - -->
+		<!-- Service:  activate candidate data source in GeoNetwork 
+		to start to harvest metadata based on harvesting cycle but not harvest immediately. -->
+		<service name="aurin.datasource.mgmt.activate" prefixURLNotallowed="yes">
+			<class name=".services.harvesting.aurin.DataSourceMgmt">
+				<param name="cmd" value="activate" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  deactivate candidate data source in GeoNetwork
+		to stop to harvest metadata on predefined harvesting cycle.-->
+		<service name="aurin.datasource.mgmt.deactivate" prefixURLNotallowed="yes">
+			<class name=".services.harvesting.aurin.DataSourceMgmt">
+				<param name="cmd" value="deactivate" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: It starts to harvest candidate data source,
+		 but it will not re-harvest on next harvesting cycle if it wasn't activated.
+		This is like manual push on execution harvesting for specific node.
+		-->
+		<service name="aurin.datasource.mgmt.run" prefixURLNotallowed="yes">
+			<class name=".services.harvesting.aurin.DataSourceMgmt">
+				<param name="cmd" value="run" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- - - - - - - - - - End of Harvesting Node Configuration Services- - - - - - - - - - - - -->
+		
+		<!-- User interface: Metadata UI Designer -->
+		<service name="aurin.metadata.ui.designer" prefixURLNotallowed="yes">
+			
+			<output sheet="aurin/metadata_ui_designer.xsl" contentType="text/html; charset=UTF-8"/>
+		</service>
+		
+		<!-- - - - - - - - - - Start of AURIN Data Entry UI Model Services- - - - - - - - - - - - -->
+		<!-- Service:  get metadata entry UI model -->
+		
+		<service name="aurin.metadata.ui.model.get.json">
+			<class name=".services.metadata.aurin.UIModel">
+				<param name="cmd" value="get" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  not used -->
+		<service name="aurin.metadata.ui.model.insert" prefixURLNotallowed="yes">
+			<class name=".services.metadata.aurin.UIModel">
+				<param name="cmd" value="insert" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  update metadata entry UI model in JSON format in metadata_uilogic table as one record's column's value-->
+		<service name="aurin.metadata.ui.model.update" prefixURLNotallowed="yes">
+			<class name=".services.metadata.aurin.UIModel">
+				<param name="cmd" value="update" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  delete functionality in UI Designer hasn't been implemented so this service is not used -->
+		<service name="aurin.metadata.ui.model.delete" prefixURLNotallowed="yes">
+			<class name=".services.metadata.aurin.UIModel">
+				<param name="cmd" value="delete" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		
+		<!-- - - - - - - - - - End of AURIN Data Entry UI Model Services- - - - - - - - - - - - -->
+		
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- Service:  get attributes by calling AURIN data provider service (get describe features) and replace them as AURIN additional elements in metadata XML in metadata table's "data_aurin_modifiable" column -->
+		<service name="aurin.metadata.manuallyadded.getAndReplaceAttributes">
+			<class name=".services.metadata.aurin.DescribeFeatureTypes">
+				<param name="cmd" value="manuallyadded_getAndReplaceAttributes" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  get attributes by calling AURIN data provider service (get describe features) and replace them as AURIN additional elements in metadata XML in metadata table's "data_aurin_modifiable" column -->		
+		<service name="aurin.metadata.harvested.getAndReplaceAttributes">
+			<class name=".services.metadata.aurin.DescribeFeatureTypes">
+				<param name="cmd" value="harvested_getAndReplaceAttributes" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		
+		<!-- Service:  check get attributes service by calling AURIN data provider service (get describe features) for manually added metadata and shows the actual and converted respone in UI -->		
+		<service name="aurin.metadata.manuallyadded.checkAURINFetchAttributes" prefixURLNotallowed="yes">
+			<class name=".services.metadata.aurin.DescribeFeatureTypes">
+				<param name="cmd" value="manuallyadded_checkAURINFetchAttributesService" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="aurin/success_response.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		
+		<service name="aurin.metadata.manuallyadded.exportAttributesInCSV"  >
+			<class name=".services.metadata.aurin.ManuallyAddedAURINMetadata">
+				<param name="cmd" value="manuallyadded_exportAttributesInCSV" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		
+		<service name="aurin.metadata.harvested.exportAttributesInCSV"  >
+			<class name=".services.metadata.aurin.AURINHarvestedMetadata">
+				<param name="cmd" value="harvested_exportAttributesInCSV" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		
+		
+		<!-- Service:  check get attributes service by calling AURIN data provider service (get describe features) for harvested metadata and shows the actual and converted respone in UI -->		
+		<service name="aurin.metadata.harvested.checkAURINFetchAttributes" prefixURLNotallowed="yes">
+			<class name=".services.metadata.aurin.DescribeFeatureTypes">
+				<param name="cmd" value="harvested_checkAURINFetchAttributesService" />
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="aurin/success_response.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		
+		<!-- Service: decisions has been taken by user on elements with update available flags (Ignore or Apply) will be updated throw this service in reharvest_compareresult table's "decision" column  -->
+		<service name="aurin.metadata.harvested.revisionInfo.updatedecision">
+			<class name=".services.metadata.aurin.revision.Set">
+				<param name="cmd" value="updatedecision" />
+			</class>
+		</service>
+		<!-- Service: (return type XML) retrieves xpath of all elements which identified to have update available on one of already executed harvesting cycles while no decision has applied
+		 to the update identified on its recent harvesting time -->		
+		<service name="aurin.metadata.harvested.revisionInfo.get">
+			<class name=".services.metadata.aurin.revision.Get">
+			</class>
+		</service>
+		<!-- Service: (return type JSON) retrieves xpath of all elements which identified to have update available on one of already executed harvesting cycles while no decision has applied
+		 to the update identified on its recent harvesting time -->		
+		<service name="aurin.metadata.harvested.revisionInfo.get.json">
+			<class name=".services.metadata.aurin.revision.Get">
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: (return type XML) get metadata information  -->	
+		<service name="aurin.metadata.harvested.info.get">
+			<class name=".services.metadata.aurin.MetadataInfoMgmt">
+				<param name="cmd" value="getHarvestedOne" />
+			</class>
+		</service>
+		<!-- Service: (return type JSON) get metadata information  -->	
+		<service name="aurin.metadata.harvested.info.get.json">
+			<class name=".services.metadata.aurin.MetadataInfoMgmt">
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="getHarvestedOne" />				
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: (return type JSON) get metadata information  -->	
+		<service name="aurin.metadata.manuallyadded.info.get.json">
+			<class name=".services.metadata.aurin.MetadataInfoMgmt">
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="getManuallyaddedOne" />				
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service: (return type JSON) get all metadata information, it filters metadata records based on organisation name and datasource name if it is provided in URL as prefix URL part
+		(It returns organisation name and data source name of each metadata from sources table)  -->	
+		<service name="aurin.metadata.harvested.info.getAll.json" >
+			<class name=".services.metadata.aurin.MetadataInfoMgmt">
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="getAllHarvested" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<service name="aurin.metadata.harvested.info.getAll.excel" >
+			<class name=".services.metadata.aurin.MetadataInfoMgmt">
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="getAllHarvested_excel" />
+			</class>
+			<output sheet="json.xsl" contentType="application/vnd.ms-excel; charset=UTF-8" />
+		</service>
+		<!-- Service: (return type JSON) get all metadata information, it filters metadata records based on organisation name and datasource name if it is provided in URL as prefix URL part 
+		(It returns organisation name and data source name of each metadata from data_source table) -->	
+		<service name="aurin.metadata.manuallyadded.info.getAll.json" >
+			<class name=".services.metadata.aurin.MetadataInfoMgmt">
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="getAllManuallyAdded" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<!-- Service: insert, update(remove first, reinsert), delete metadata record from AURIN respository through AURIN Data Registration service -->	
+		<service name="aurin.metadata.harvested.filter.set" >
+			<class name=".services.metadata.aurin.AURINDataSetMgmt">
+			</class>
+		</service>
+		<service name="aurin.metadata.harvested.filter.set.json" >
+			<class name=".services.metadata.aurin.AURINDataSetMgmt">
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- Service:  (return type JSON) insert, update(remove first, reinsert), delete metadata record from AURIN respository through AURIN Data Registration service -->
+		
+		<service name="aurin.metadata.manuallyadded.filter.set.json" >
+			<class name=".services.metadata.aurin.AURINDataSetMgmt">
+				<param name="jsonOutput" value="true" />
+				<param name="metadataType" value="manuallyadded" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+		<service name="aurin.metadata.internal.convert">
+			<class name=".services.metadata.aurin.AURINInternalConvertor"/>
+		</service>
+		
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+		<service name="aurin.metadata.convert">
+			<class name=".services.metadata.aurin.AURINConvertor"/>
+		</service>
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+		<service name="aurin.metadata.convert.json">
+			<class name=".services.metadata.aurin.AURINConvertor">
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+		<service name="aurin.metadata.validate">
+			<class name=".services.metadata.aurin.AURINValidator"/>
+		</service>
+		<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+		<service name="aurin.metadata.validate.json">
+			<class name=".services.metadata.aurin.AURINValidator">
+				<param name="jsonOutput" value="true" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>
+
+		<!-- - - - same as xml.harvesting.get but duplicated to reduce dependency- - - - -->
+		<service name="aurin.xml.harvesting.get" prefixURLNotallowed="yes">
+			<class name=".services.harvesting.Get" />
+		</service>
+		
+		<!-- - - - Start of Geocoding Section - - - -->
+		<service name="aurin.dataprep.geocoding.get.json"  >
+			<class name=".services.dataprep.geocoding.GeoCoding" >
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="get" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>		
+		
+		<service name="aurin.dataprep.geocoding.dbaccess.form"  >			
+			
+			<output sheet="aurin/dataprep/geocoding/geocoding_dbaccess.xsl" contentType="text/html; charset=UTF-8"/>
+		</service>	
+		
+		<service name="aurin.dataprep.gecoding.dbaccess.fetchtablenames"  >			
+			<class name=".services.dataprep.geocoding.GeoCoding" >
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="fetchtablenames" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>	
+		<service name="aurin.dataprep.gecoding.dbaccess.fetchcolumnnames"  >			
+			<class name=".services.dataprep.geocoding.GeoCoding" >
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="fetchcolumnnames" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>	
+		<service name="aurin.dataprep.gecoding.dbaccess.fetchtablecontent"  >			
+			<class name=".services.dataprep.geocoding.GeoCoding" >
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="fetchtablecontent" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>	
+		
+		<service name="aurin.dataprep.geocoding.geocode_database"  >
+			<class name=".services.dataprep.geocoding.GeoCoding" >
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="geocode_database" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>	
+		
+		<service name="aurin.dataprep.gecoding.dbaccess.import_selectedsheets_todb"  >
+			<class name=".services.dataprep.importdataset.ImportExcel" >
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="import_selectedsheets_todb" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>		
+		<!-- Start of Import Dataset -->
+		<service name="aurin.dataprep.importdataset.form"  >			
+			
+			<output sheet="aurin/dataprep/importdataset/importdataset.xsl" contentType="text/html; charset=UTF-8"/>
+		</service>	
+		
+		<service name="aurin.dataprep.importdataset.uploadExcelFileAndGetSheetName"  >
+			<class name=".services.dataprep.importdataset.ImportExcel" >
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="uploadExcelFileAndGetSheetName" />
+			</class>
+			<output sheet="json.xsl" contentType=" text/html; charset=UTF-8" />
+		</service>	
+	
+		<!-- End of Import Dataset -->
+		<!-- Start of General Services -->
+		<service name="aurin.dataprep.changecolumntype"  >
+			<class name=".services.dataprep.ChangeColumnType" >
+				<param name="jsonOutput" value="true" />
+				<param name="cmd" value="change_type" />
+			</class>
+			<output sheet="json.xsl" contentType="application/json; charset=UTF-8" />
+		</service>	
+	 
+		<!-- End of General Services -->	
+		<!-- - - - End of Geocoding Section - - - -->
+		
+	</services>
+</geonet>
+
